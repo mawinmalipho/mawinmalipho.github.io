@@ -228,31 +228,71 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    // 6. Form Submission Mocking
+    // 6. Form Submission Integration via Web3Forms
     const contactForm = document.getElementById('contactForm');
     const formSuccess = document.getElementById('formSuccess');
+    const formSubmitBtn = document.getElementById('formSubmitBtn');
 
     if (contactForm && formSuccess) {
         contactForm.addEventListener('submit', (e) => {
             e.preventDefault();
             
-            // Gather info
-            const name = document.getElementById('form-name').value;
-            const contact = document.getElementById('form-contact').value;
-            const details = document.getElementById('form-details').value;
+            // Check if key is configured
+            const keyInput = contactForm.querySelector('input[name="access_key"]');
+            if (!keyInput || keyInput.value === 'YOUR_ACCESS_KEY_HERE') {
+                alert('กรุณาตั้งค่า Web3Forms Access Key ในไฟล์ index.html ก่อนใช้งานฟอร์มส่งอีเมลครับ (ดูวิธีตั้งค่าในกล่องแนะนำ)');
+                return;
+            }
 
-            console.log('New Project Lead:', { name, contact, details });
+            // Show loading state
+            const originalBtnText = formSubmitBtn.textContent;
+            formSubmitBtn.textContent = 'กำลังส่งข้อมูล...';
+            formSubmitBtn.disabled = true;
 
-            // Show success alert
-            formSuccess.classList.add('show');
+            const formData = new FormData(contactForm);
             
-            // Clear inputs
-            contactForm.reset();
-
-            // Hide success message after 5 seconds
-            setTimeout(() => {
-                formSuccess.classList.remove('show');
-            }, 5000);
+            // Send request to Web3Forms API
+            fetch('https://api.web3forms.com/submit', {
+                method: 'POST',
+                body: formData
+            })
+            .then(async (response) => {
+                let json = await response.json();
+                if (response.status == 200) {
+                    // Show success alert
+                    formSuccess.classList.add('show');
+                    formSuccess.style.backgroundColor = 'rgba(0, 255, 136, 0.1)';
+                    formSuccess.style.borderColor = 'var(--accent)';
+                    formSuccess.style.color = 'var(--accent)';
+                    formSuccess.innerHTML = '<i class="fa-solid fa-circle-check"></i> ส่งข้อมูลสำเร็จ! ผมจะติดต่อกลับโดยเร็วที่สุดครับ';
+                    contactForm.reset();
+                } else {
+                    console.log(response);
+                    formSuccess.classList.add('show');
+                    formSuccess.style.backgroundColor = 'rgba(255, 95, 86, 0.1)';
+                    formSuccess.style.borderColor = '#ff5f56';
+                    formSuccess.style.color = '#ff5f56';
+                    formSuccess.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> เกิดข้อผิดพลาด: ' + json.message;
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                formSuccess.classList.add('show');
+                formSuccess.style.backgroundColor = 'rgba(255, 95, 86, 0.1)';
+                formSuccess.style.borderColor = '#ff5f56';
+                formSuccess.style.color = '#ff5f56';
+                formSuccess.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> ไม่สามารถเชื่อมต่อระบบส่งข้อมูลได้';
+            })
+            .then(() => {
+                // Reset button state
+                formSubmitBtn.textContent = originalBtnText;
+                formSubmitBtn.disabled = false;
+                
+                // Hide message after 6 seconds
+                setTimeout(() => {
+                    formSuccess.classList.remove('show');
+                }, 6000);
+            });
         });
     }
 });
