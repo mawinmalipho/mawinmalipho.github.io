@@ -467,7 +467,10 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!res.ok) throw new Error('Database response error');
       return res.json();
     })
-    .then(data => console.log('Successfully saved to database:', data))
+    .then(data => {
+      console.log('Successfully saved to database:', data);
+      loadQuizCount();
+    })
     .catch(err => console.error('Database saving failed:', err));
   }
 
@@ -674,5 +677,31 @@ document.addEventListener("DOMContentLoaded", () => {
       closeEnemyScan();
     }
   });
+
+  // Fetch live quiz count
+  function loadQuizCount() {
+    const counterElement = document.getElementById("karmic-counter");
+    if (!counterElement) return;
+
+    const apiEndpoint = window.location.hostname.includes("github.io")
+      ? "https://mawinmalipho.vercel.app/api/quiz-count"
+      : "/api/quiz-count";
+
+    fetch(apiEndpoint)
+      .then(res => {
+        if (!res.ok) throw new Error("Could not fetch quiz count");
+        return res.json();
+      })
+      .then(data => {
+        counterElement.innerText = Number(data.count).toLocaleString();
+      })
+      .catch(err => {
+        console.error("Failed to load quiz count:", err);
+        counterElement.innerText = "99+"; // fallback
+      });
+  }
+
+  // Load count initially
+  loadQuizCount();
 
 });
