@@ -48,6 +48,8 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentQuestionIndex = 0;
   let userScores = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 };
   let answersHistory = []; // Tracks selected choices indices to support going back
+  let userName = "";
+  let userPhone = "";
   let primaryType = 1;
 
   // --- Enneagram Profiles Data ---
@@ -192,6 +194,29 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- Quiz Engine Logic ---
 
   function startQuiz() {
+    const nameInput = document.getElementById("user-name");
+    const phoneInput = document.getElementById("user-phone");
+    const errorMsg = document.getElementById("info-error-msg");
+
+    const nameVal = nameInput.value.trim();
+    const phoneVal = phoneInput.value.trim();
+
+    if (!nameVal || !phoneVal) {
+      errorMsg.classList.remove("hidden");
+      if (!nameVal) nameInput.style.borderColor = "var(--neon-pink)";
+      if (!phoneVal) phoneInput.style.borderColor = "var(--neon-pink)";
+      return;
+    }
+
+    // Reset styles
+    nameInput.style.borderColor = "";
+    phoneInput.style.borderColor = "";
+    errorMsg.classList.add("hidden");
+
+    // Store globally
+    userName = nameVal;
+    userPhone = phoneVal;
+
     introScreen.classList.remove("active");
     resultsScreen.classList.remove("active");
     setTimeout(() => {
@@ -411,6 +436,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function saveResultToDatabase(dominant, awarenessLevel, scores) {
     const payload = {
+      name: userName,
+      phone: userPhone,
       dominant_type: dominant,
       awareness_level: awarenessLevel,
       scores: scores
@@ -607,7 +634,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- Event Listeners ---
   btnStart.addEventListener("click", startQuiz);
-  btnRetry.addEventListener("click", startQuiz);
+  btnRetry.addEventListener("click", () => {
+    resultsScreen.classList.remove("active");
+    setTimeout(() => {
+      resultsScreen.classList.add("hidden");
+      introScreen.classList.remove("hidden");
+      introScreen.classList.add("active");
+      document.getElementById("user-name").focus();
+    }, 400);
+  });
   btnShare.addEventListener("click", shareResult);
   btnScanEnemy.addEventListener("click", openEnemyScan);
   closeModalBtn.addEventListener("click", closeEnemyScan);

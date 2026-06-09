@@ -104,6 +104,20 @@
         <p class="intro-warning">
           ⚠️ คำเตือน: แบบทดสอบนี้มีความจริงใจและประชดประชันสูงมาก หากจิตใจเปราะบางหรือไม่อยากยอมรับด้านมืด กรุณากดปิดไปนอนเสียดีกว่า
         </p>
+        
+        <!-- User Info inputs -->
+        <div class="user-info-container">
+          <div class="input-group">
+            <label for="user-name" class="input-label">ชื่อ / นามแฝงของคุณ <span class="required">*</span></label>
+            <input type="text" id="user-name" class="input-field" placeholder="ระบุชื่อหรือนามแฝงของคุณ..." required>
+          </div>
+          <div class="input-group">
+            <label for="user-phone" class="input-label">เบอร์โทรศัพท์ <span class="required">*</span></label>
+            <input type="tel" id="user-phone" class="input-field" placeholder="ระบุเบอร์โทรศัพท์เพื่อบันทึกประวัติ..." required>
+          </div>
+          <div id="info-error-msg" class="info-error-msg hidden">⚠️ กรุณากรอกชื่อและเบอร์โทรศัพท์ก่อนเริ่ม</div>
+        </div>
+
         <button id="btn-start" class="btn btn-primary btn-glow">เริ่มเข้าสู่พิธีพิพากษากรรม</button>
       </div>
     </section>
