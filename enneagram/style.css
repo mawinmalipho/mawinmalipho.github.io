@@ -382,10 +382,10 @@ p {
 }
 
 .intro-warning {
-  color: var(--text-main);
+  color: #ff3366;
   font-size: 0.95rem;
-  background: rgba(176, 0, 255, 0.06);
-  border: 1px dashed rgba(176, 0, 255, 0.25);
+  background: rgba(255, 51, 102, 0.08);
+  border: 1px dashed rgba(255, 51, 102, 0.25);
   padding: 15px;
   border-radius: 10px;
   margin-bottom: 30px;
