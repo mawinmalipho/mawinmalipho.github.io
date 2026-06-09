@@ -445,7 +445,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Dynamically point to Vercel production deployment if running on GitHub Pages
     const apiEndpoint = window.location.hostname.includes("github.io")
-      ? "https://mawinmalipho-github-io.vercel.app/api/quiz-submit"
+      ? "https://mawinmalipho.vercel.app/api/quiz-submit"
       : "/api/quiz-submit";
 
     fetch(apiEndpoint, {
