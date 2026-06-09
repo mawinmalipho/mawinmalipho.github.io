@@ -371,14 +371,25 @@ p {
   font-size: 0.95rem;
 }
 
+.intro-subtitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--neon-cyan);
+  text-shadow: 0 0 8px rgba(0, 240, 255, 0.3);
+  margin-top: -15px;
+  margin-bottom: 25px;
+  letter-spacing: 0.5px;
+}
+
 .intro-warning {
-  color: #ff3366;
+  color: var(--text-main);
   font-size: 0.95rem;
-  background: rgba(255, 51, 102, 0.08);
-  border: 1px dashed rgba(255, 51, 102, 0.25);
+  background: rgba(176, 0, 255, 0.06);
+  border: 1px dashed rgba(176, 0, 255, 0.25);
   padding: 15px;
   border-radius: 10px;
   margin-bottom: 30px;
+  line-height: 1.6;
 }
 
 /* 8. QUIZ SCREEN SPECIFIC */
