@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แผนงาน PX Media Content | IMPACT</title>
+
+    <!-- Google Fonts: Archivo Black (Display) and Space Grotesk (Body) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* ===========================================
+           CSS CUSTOM PROPERTIES (THEME)
+           Style Preset: Bold Signal (Vibrant Orange & Dark Slate)
+           =========================================== */
+        :root {
+            --bg-primary: #121212;
+            --bg-gradient: linear-gradient(135deg, #121212 0%, #1e1e1e 50%, #121212 100%);
+            --card-bg: #FF5722;
+            --text-primary: #ffffff;
+            --text-secondary: #aaaaaa;
+            --text-muted: #666666;
+            --text-on-card: #121212;
+            
+            --font-display: 'Archivo Black', sans-serif;
+            --font-body: 'Space Grotesk', sans-serif;
+            
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+            --duration-normal: 0.8s;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* ===========================================
+           FIXED 16:9 STAGE: MANDATORY BASE STYLES
+           =========================================== */
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+            background: var(--bg-primary);
+        }
+
+        .deck-viewport {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            background: var(--bg-primary);
+        }
+
+        .deck-stage {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 1920px;
+            height: 1080px;
+            overflow: hidden;
+            transform-origin: 0 0;
+            background: var(--bg-gradient);
+        }
+
+        .slide {
+            position: absolute;
+            inset: 0;
+            width: 1920px;
+            height: 1080px;
+            overflow: hidden;
+            display: block;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            background: transparent;
+            padding: 90px 100px;
+            transition: opacity 0.6s var(--ease-out-expo), visibility 0.6s var(--ease-out-expo);
+        }
+
+        .slide.active,
+        .slide.visible {
+            visibility: visible;
+            opacity: 1;
+            pointer-events: auto;
+            z-index: 1;
+        }
+
+        img,
+        video,
+        canvas,
+        svg {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        /* ===========================================
+           ANIMATIONS (REVEAL)
+           =========================================== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity var(--duration-normal) var(--ease-out-expo),
+                        transform var(--duration-normal) var(--ease-out-expo);
+        }
+
+        .slide.visible .reveal {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Stagger delays for sequential reveal */
+        .reveal:nth-child(1) { transition-delay: 0.05s; }
+        .reveal:nth-child(2) { transition-delay: 0.15s; }
+        .reveal:nth-child(3) { transition-delay: 0.25s; }
+        .reveal:nth-child(4) { transition-delay: 0.35s; }
+        .reveal:nth-child(5) { transition-delay: 0.45s; }
+        .reveal:nth-child(6) { transition-delay: 0.55s; }
+
+        /* Left panel slides in sideways */
+        .slide.visible .left-panel.reveal {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .left-panel.reveal {
+            transform: translateX(-50px);
+        }
+
+        /* ===========================================
+           SLIDE CHROME & LAYOUT PARTS
+           =========================================== */
+        .slide-header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 50px;
+            font-family: var(--font-body);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 20px;
+        }
+
+        .header-title {
+            font-size: 18px;
+            color: var(--card-bg);
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .header-page {
+            font-size: 18px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .slide-title-large {
+            font-family: var(--font-display);
+            font-size: 64px;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            line-height: 1.1;
+            margin-bottom: 15px;
+            letter-spacing: -1px;
+        }
+
+        .slide-focus {
+            font-family: var(--font-body);
+            font-size: 26px;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            line-height: 1.4;
+        }
+
+        .slide-content-grid {
+            display: flex;
+            gap: 30px;
+            width: 100%;
+            height: 600px;
+            align-items: flex-start;
+        }
+
+        /* Standard Content Card */
+        .content-card {
+            background: #181818;
+            border: 1px solid #282828;
+            border-radius: 20px;
+            padding: 40px 35px;
+            flex: 1;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.4s var(--ease-out-expo), border-color 0.4s var(--ease-out-expo), box-shadow 0.4s var(--ease-out-expo);
+        }
+
+        .content-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--card-bg);
+            box-shadow: 0 10px 30px rgba(255, 87, 34, 0.1);
+        }
+
+        .card-number {
+            font-family: var(--font-display);
+            font-size: 60px;
+            color: var(--card-bg);
+            line-height: 1;
+            margin-bottom: 20px;
+        }
+
+        .card-format-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            background: rgba(255, 87, 34, 0.15);
+            border: 1px solid var(--card-bg);
+            border-radius: 50px;
+            color: var(--card-bg);
+            font-family: var(--font-body);
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 25px;
+            align-self: flex-start;
+        }
+
+        .card-title {
+            font-family: var(--font-display);
+            font-size: 32px;
+            color: var(--text-primary);
+            line-height: 1.2;
+            margin-bottom: 15px;
+        }
+
+        .card-description {
+            font-family: var(--font-body);
+            font-size: 20px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: 25px;
+        }
+
+        .card-example {
+            font-family: var(--font-body);
+            font-size: 18px;
+            color: var(--text-muted);
+            line-height: 1.4;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 20px;
+            margin-top: auto;
+        }
+
+        .example-label {
+            color: var(--card-bg);
+            font-weight: 700;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        /* ===========================================
+           SLIDE-SPECIFIC LAYOUT MODIFICATIONS
+           =========================================== */
+        
+        /* Slide 1: Title Slide */
+        .title-slide-layout {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%;
+            padding: 0;
+        }
+
+        .slide-left-panel {
+            width: 700px;
+            height: 940px;
+            background: var(--card-bg);
+            border-radius: 30px;
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 20px 50px rgba(255, 87, 34, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide-left-panel::after {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+            top: -100px;
+            right: -100px;
+            filter: blur(50px);
+            pointer-events: none;
+        }
+
+        .title-number {
+            font-family: var(--font-display);
+            font-size: 140px;
+            color: var(--text-on-card);
+            line-height: 0.9;
+        }
+
+        .title-card-text {
+            font-family: var(--font-display);
+            font-size: 76px;
+            color: var(--text-on-card);
+            line-height: 1.05;
+            text-transform: uppercase;
+        }
+
+        .slide-right-panel {
+            width: 900px;
+            height: 940px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-left: 80px;
+        }
+
+        .title-tagline {
+            font-family: var(--font-body);
+            font-size: 40px;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 6px;
+            margin-bottom: 24px;
+        }
+
+        .title-divider {
+            width: 120px;
+            height: 8px;
+            background: var(--card-bg);
+            margin-bottom: 40px;
+            border-radius: 4px;
+        }
+
+        .title-context {
+            font-family: var(--font-body);
+            font-size: 30px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .title-team-tag {
+            display: inline-block;
+            margin-top: 50px;
+            padding: 12px 28px;
+            background: #252525;
+            border-radius: 50px;
+            color: #ffffff;
+            font-family: var(--font-body);
+            font-size: 20px;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border: 1px solid #333333;
+        }
+
+        /* Slide 2: Overview 4 Pillars Grid */
+        .overview-grid {
+            display: flex;
+            gap: 30px;
+            width: 100%;
+            height: 520px;
+        }
+        
+        .overview-card {
+            background: #181818;
+            border: 1px solid #282828;
+            border-radius: 20px;
+            padding: 40px 30px;
+            flex: 1;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            transition: transform 0.4s var(--ease-out-expo), border-color 0.4s var(--ease-out-expo);
+        }
+
+        .overview-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--card-bg);
+        }
+
+        .overview-num {
+            font-family: var(--font-display);
+            font-size: 72px;
+            color: var(--card-bg);
+            line-height: 1;
+            margin-bottom: 20px;
+        }
+
+        .overview-title {
+            font-family: var(--font-display);
+            font-size: 28px;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            line-height: 1.2;
+        }
+
+        .overview-desc {
+            font-family: var(--font-body);
+            font-size: 20px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Slide 4, 5, 6: Two-column layout variations */
+        .two-column-split {
+            display: flex;
+            gap: 60px;
+            width: 100%;
+            height: 560px;
+        }
+
+        .split-left {
+            width: 650px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .split-right {
+            flex: 1;
+            display: flex;
+            gap: 30px;
+            height: 100%;
+        }
+
+        .focus-quote {
+            font-family: var(--font-body);
+            font-size: 32px;
+            line-height: 1.5;
+            color: var(--text-primary);
+            border-left: 6px solid var(--card-bg);
+            padding-left: 30px;
+            margin-bottom: 30px;
+        }
+
+        /* Slide 7: Closing */
+        .closing-card {
+            background: var(--card-bg);
+            border-radius: 30px;
+            width: 100%;
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 80px;
+            box-shadow: 0 30px 60px rgba(255, 87, 34, 0.15);
+            position: relative;
+            overflow: hidden;
+            margin-top: 60px;
+        }
+
+        .closing-card::after {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            top: -250px;
+            left: -100px;
+            filter: blur(80px);
+            pointer-events: none;
+        }
+
+        .closing-title {
+            font-family: var(--font-display);
+            font-size: 84px;
+            color: var(--text-on-card);
+            line-height: 1.1;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+
+        .closing-subtitle {
+            font-family: var(--font-body);
+            font-size: 36px;
+            color: var(--text-on-card);
+            max-width: 800px;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        .closing-team {
+            margin-top: 40px;
+            font-family: var(--font-body);
+            font-size: 22px;
+            color: rgba(18, 18, 18, 0.6);
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* ===========================================
+           INLINE EDITING UI
+           =========================================== */
+        .edit-hotzone {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 80px;
+            height: 80px;
+            z-index: 10000;
+            cursor: pointer;
+        }
+        
+        .edit-toggle {
+            position: fixed;
+            top: 25px;
+            left: 25px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #252525;
+            border: 2px solid var(--card-bg);
+            color: #ffffff;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease, background 0.2s ease, transform 0.2s ease;
+            z-index: 10001;
+        }
+
+        .edit-toggle:hover {
+            background: var(--card-bg);
+            color: var(--text-on-card);
+            transform: scale(1.05);
+        }
+
+        .edit-toggle.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .edit-toggle.active {
+            opacity: 1;
+            pointer-events: auto;
+            background: var(--card-bg);
+            color: var(--text-on-card);
+            box-shadow: 0 0 15px var(--card-bg);
+        }
+
+        /* Styling for editable fields during edit mode */
+        body.edit-mode-active .editable {
+            outline: 1px dashed rgba(255, 87, 34, 0.5);
+            outline-offset: 4px;
+            cursor: text;
+        }
+
+        body.edit-mode-active .editable:focus {
+            outline: 2px solid var(--card-bg);
+            background: rgba(255, 87, 34, 0.05);
+        }
+
+        /* Visual indicator for Edit Mode */
+        .edit-mode-banner {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100%);
+            background: var(--card-bg);
+            color: var(--text-on-card);
+            font-family: var(--font-body);
+            font-size: 14px;
+            font-weight: 700;
+            padding: 8px 24px;
+            border-radius: 0 0 12px 12px;
+            z-index: 9999;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 4px 15px rgba(255, 87, 34, 0.2);
+        }
+
+        body.edit-mode-active .edit-mode-banner {
+            transform: translateX(-50%) translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Inline Editor Controls -->
+    <div class="edit-hotzone"></div>
+    <button class="edit-toggle" id="editToggle" title="Edit Mode (E)">✏️</button>
+    <div class="edit-mode-banner">Edit Mode Active — Press E or click pencil to exit (Ctrl+S to save)</div>
+
+    <div class="deck-viewport">
+        <main class="deck-stage" id="deckStage">
+            
+            <!-- SLIDE 1: TITLE -->
+            <section class="slide title-slide active visible">
+                <div class="title-slide-layout">
+                    <div class="slide-left-panel left-panel reveal">
+                        <div class="title-number editable">01</div>
+                        <div class="title-card-text editable">แผนงาน<br>PX MEDIA<br>CONTENT</div>
+                    </div>
+                    
+                    <div class="slide-right-panel">
+                        <div class="title-tagline reveal editable">4 Pillars of Content</div>
+                        <div class="title-divider reveal"></div>
+                        <div class="title-context reveal editable">
+                            กลยุทธ์การสร้างสรรค์สื่อประชาสัมพันธ์และคอนเทนต์ภายในองค์กร<br>
+                            เพื่อยกระดับประสบการณ์พนักงานและสร้างวัฒนธรรมอันเข้มแข็งของ IMPACT
+                        </div>
+                        <div class="reveal">
+                            <span class="title-team-tag editable">People Experience Team</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 2: OVERVIEW -->
+            <section class="slide">
+                <div class="slide-header">
+                    <span class="header-title editable">PX Media Content Plan</span>
+                    <span class="header-page editable">02 / 07</span>
+                </div>
+                <h2 class="slide-title-large reveal editable">4 PILLARS OF CONTENT</h2>
+                <p class="slide-focus reveal editable">โครงสร้างหลักการสร้างคอนเทนต์ของทีม People Experience (PX)</p>
+                
+                <div class="overview-grid">
+                    <div class="overview-card reveal">
+                        <div class="overview-num editable">01</div>
+                        <div class="overview-title editable">People & Culture</div>
+                        <div class="overview-desc editable">นำเสนอความเป็น ‘คน' และ 'Culture' ของอิมแพ็ค ผ่านการ Recognition พนักงานส่วนงานต่างๆ</div>
+                    </div>
+                    
+                    <div class="overview-card reveal">
+                        <div class="overview-num editable">02</div>
+                        <div class="overview-title editable">Lifestyle</div>
+                        <div class="overview-desc editable">ทำเมืองทองธานีให้น่าอยู่และน่าทำงาน เล่าผ่านพนักงาน และกระแสความหรรษาในออฟฟิศ</div>
+                    </div>
+                    
+                    <div class="overview-card reveal">
+                        <div class="overview-num editable">03</div>
+                        <div class="overview-title editable">Internal to External</div>
+                        <div class="overview-desc editable">สื่อสารเรื่องภายใน แจ้งข่าวประชาสัมพันธ์ และ Coverage ไฮไลท์กิจกรรมสำคัญในบริษัท</div>
+                    </div>
+                    
+                    <div class="overview-card reveal">
+                        <div class="overview-num editable">04</div>
+                        <div class="overview-title editable">Knowledge Sharing</div>
+                        <div class="overview-desc editable">ให้ความรู้ สร้างแรงบันดาลใจ และพัฒนาภาพลักษณ์ความมืออาชีพผ่าน KOL ของอิมแพ็ค</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 3: PILLAR 1 -->
+            <section class="slide">
+                <div class="slide-header">
+                    <span class="header-title editable">Pillar 1: People & Culture</span>
+                    <span class="header-page editable">03 / 07</span>
+                </div>
+                <h2 class="slide-title-large reveal editable">PEOPLE & CULTURE</h2>
+                <p class="slide-focus reveal editable">นำเสนอความเป็น ‘คน' และ 'Culture' ของอิมแพ็คผ่านการ Recognition</p>
+                
+                <div class="slide-content-grid">
+                    <div class="content-card reveal">
+                        <div>
+                            <span class="card-format-badge editable">คลิป Short-Form</span>
+                            <h3 class="card-title editable">Made in อิมแพ็ค</h3>
+                            <p class="card-description editable">พาคุยกับพนักงานส่วนต่างๆ ถามคำถามเดียวสั้นๆ ตัดแบบ Quick Cut เน้นเร็ว กระชับ สนุก ย่อยง่าย ได้ Recognize คนหน้างาน</p>
+                        </div>
+                        <div class="card-example">
+                            <span class="example-label">Example</span>
+                            <span class="editable">"ความสนุกของงานจัดซื้อคืออะไร?"</span>
+                        </div>
+                    </div>
+
+                    <div class="content-card reveal">
+                        <div>
+                            <span class="card-format-badge editable">คลิป Short-Form</span>
+                            <h3 class="card-title editable">1 Day with...</h3>
+                            <p class="card-description editable">นำเสนอแบบ Second Eye พาไปเกาะติดการทำงานจริงใน 1 วันของพนักงานตำแหน่งต่างๆ เพื่อเจาะลึกบทบาทงาน</p>
+                        </div>
+                        <div class="card-example">
+                            <span class="example-label">Example</span>
+                            <span class="editable">"1 วันกับ Marshall ที่ SpeedPark ทำอะไรบ้าง?"</span>
+                        </div>
+                    </div>
+
+                    <div class="content-card reveal">
+                        <div>
+                            <span class="card-format-badge editable">TikTok Live</span>
+                            <h3 class="card-title editable">Live in เมืองทอง</h3>
+                            <p class="card-description editable">ไลฟ์พูดคุยเล่าเรื่องงานในอิมแพ็ค แนะนำสายงานและพาไปดูการทำงานกันแบบสดๆ ชวนผู้คนมาร่วมงานกับครอบครัวอิมแพ็ค</p>
+                        </div>
+                        <div class="card-example">
+                            <span class="example-label">Example</span>
+                            <span class="editable">"รับสมัครช่างอิมแพ็ค พร้อมพาทัวร์ดูการทำงานสดๆ"</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 4: PILLAR 2 -->
+            <section class="slide">
+                <div class="slide-header">
+                    <span class="header-title editable">Pillar 2: Lifestyle</span>
+                    <span class="header-page editable">04 / 07</span>
+                </div>
+                
+                <div class="two-column-split">
+                    <div class="split-left">
+                        <h2 class="slide-title-large reveal editable">LIFESTYLE</h2>
+                        <div class="focus-quote reveal editable">
+                            "ทำให้เมืองทองน่าอยู่และน่าทำงาน"
+                        </div>
+                        <p class="slide-focus reveal editable" style="margin-bottom: 0;">
+                            สร้างการมีส่วนร่วมผ่านความสุข แนะนำร้านอร่อย กิจกรรมผ่อนคลาย และหยิบยกไลฟ์สไตล์แบบออฟฟิศหรรษามาถ่ายทอดในรูปแบบที่สนุกสนาน
+                        </p>
+                    </div>
+                    
+                    <div class="split-right">
+                        <div class="content-card reveal">
+                            <div>
+                                <span class="card-format-badge editable">คลิป Long-Form</span>
+                                <h3 class="card-title editable">Made in เมืองทอง</h3>
+                                <p class="card-description editable">ให้พนักงานอิมแพ็คสวมบทบาทผู้นำทาง พาไปกิน ชิม เที่ยว เล่น ทำกิจกรรมตามจุดต่างๆ ในย่านเมืองทองธานี</p>
+                            </div>
+                            <div class="card-example">
+                                <span class="example-label">Example</span>
+                                <span class="editable">"เลิกงานแล้วไปไหนดี? ออกกำลังกายและกินข้าวร้านไหนเด็ด"</span>
+                            </div>
+                        </div>
+
+                        <div class="content-card reveal">
+                            <div>
+                                <span class="card-format-badge editable">คลิป Short-Form</span>
+                                <h3 class="card-title editable">Office หรรษา</h3>
+                                <p class="card-description editable">เล่นกับกระแสและเทรนด์ชีวิตออฟฟิศ คอนเทนต์ตามเทรนด์ในโซเชียล ถ่ายทอดด้วยอารมณ์ขันและมีความสร้างสรรค์</p>
+                            </div>
+                            <div class="card-example">
+                                <span class="example-label">Example</span>
+                                <span class="editable">"ตัดคลิปบรรยากาศอบรมพนักงานเหมือนรายการ Reality"</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 5: PILLAR 3 -->
+            <section class="slide">
+                <div class="slide-header">
+                    <span class="header-title editable">Pillar 3: Internal to External</span>
+                    <span class="header-page editable">05 / 07</span>
+                </div>
+                
+                <div class="two-column-split">
+                    <div class="split-left">
+                        <h2 class="slide-title-large reveal editable">INTERNAL TO<br>EXTERNAL</h2>
+                        <div class="focus-quote reveal editable">
+                            "สื่อสารเรื่องภายใน เล่นใหญ่ระดับเอเจนซี่"
+                        </div>
+                        <p class="slide-focus reveal editable" style="margin-bottom: 0;">
+                            Recap และ Highlight กิจกรรมองค์กร กระตุ้นการแชร์ของพนักงาน พร้อมผลิตสื่อประชาสัมพันธ์ภายในที่มีความสร้างสรรค์ระดับโฆษณาชั้นนำ
+                        </p>
+                    </div>
+                    
+                    <div class="split-right">
+                        <div class="content-card reveal">
+                            <div>
+                                <span class="card-format-badge editable">คลิป Short-Form</span>
+                                <h3 class="card-title editable">Highlight Show Reels</h3>
+                                <p class="card-description editable"> recap กิจกรรมสำคัญที่เกิดขึ้นในบริษัทเพื่อสร้างความตระหนักรู้ ส่งเสริมความภาคภูมิใจ และชวนให้เกิดการส่งต่อแชร์ต่อ</p>
+                            </div>
+                            <div class="card-example">
+                                <span class="example-label">Example</span>
+                                <span class="editable">"ไฮไลท์งาน R2i, 10 ปีที่อิมแพ็ค, วัน ThaiFex"</span>
+                            </div>
+                        </div>
+
+                        <div class="content-card reveal">
+                            <div>
+                                <span class="card-format-badge editable">คลิป Long-Form</span>
+                                <h3 class="card-title editable">Hollywood HR</h3>
+                                <p class="card-description editable">สื่อสารกฎระเบียบหรือประชาสัมพันธ์เรื่องภายในแบบสร้างสรรค์ โปรดักชันใหญ่ สไตล์หนังโฆษณาเอเจนซี่ที่เต็มไปด้วยอารมณ์ขัน</p>
+                            </div>
+                            <div class="card-example">
+                                <span class="example-label">Example</span>
+                                <span class="editable">"กฎระเบียบการเข้างาน Staff Party, คนอิมแพ็คเขาก็ทำกันแบบนี้แหละ"</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 6: PILLAR 4 -->
+            <section class="slide">
+                <div class="slide-header">
+                    <span class="header-title editable">Pillar 4: Knowledge Sharing</span>
+                    <span class="header-page editable">06 / 07</span>
+                </div>
+                
+                <div class="two-column-split">
+                    <div class="split-left">
+                        <h2 class="slide-title-large reveal editable">KNOWLEDGE<br>SHARING</h2>
+                        <div class="focus-quote reveal editable">
+                            "สร้าง KOL ที่น่าเชื่อถือและส่งต่อแรงบันดาลใจ"
+                        </div>
+                        <p class="slide-focus reveal editable" style="margin-bottom: 0;">
+                            ให้ความรู้และสร้างความน่าเชื่อถือผ่านทักษะและภาพลักษณ์ของบุคลากรอิมแพ็ค เพื่อส่งเสริมภาพลักษณ์ความเป็นมืออาชีพสู่ภายนอก
+                        </p>
+                    </div>
+                    
+                    <div class="split-right">
+                        <div class="content-card reveal">
+                            <div>
+                                <span class="card-format-badge editable">คลิป Long-Form</span>
+                                <h3 class="card-title editable">Made in เมืองทอง Stories Podcast</h3>
+                                <p class="card-description editable">พอดแคสต์สัมภาษณ์พูดคุย เจาะลึกเทคนิคการทำงาน ประสบการณ์ และแรงบันดาลใจในแต่ละสายอาชีพที่อิมแพ็ค</p>
+                            </div>
+                            <div class="card-example">
+                                <span class="example-label">Example</span>
+                                <span class="editable">"เส้นทางการเติบโตในสายงานเชฟ, Grooming สำคัญอย่างไร"</span>
+                            </div>
+                        </div>
+
+                        <div class="content-card reveal">
+                            <div>
+                                <span class="card-format-badge editable">คลิป Short-Form</span>
+                                <h3 class="card-title editable">IMPACT Careers Original</h3>
+                                <p class="card-description editable">Talking Head แนะนำเบื้องหลังการทำงานและภาพรวมองค์กร Phase แรกเน้นการพูดคุยกับทีม HR (พี่นุ้ย, พี่เปิ้ล, พี่ออย, พี่มาร์ช, พี่ฝน)</p>
+                            </div>
+                            <div class="card-example">
+                                <span class="example-label">Example</span>
+                                <span class="editable">"IMPACT ดูแลคนกว่า 1,000 คนและดึงดูดคนรุ่นใหม่อย่างไร?"</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 7: CLOSING -->
+            <section class="slide">
+                <div class="slide-header">
+                    <span class="header-title editable">PX Media Content Plan</span>
+                    <span class="header-page editable">07 / 07</span>
+                </div>
+                
+                <div class="closing-card reveal">
+                    <h2 class="closing-title editable">PEOPLE EXPERIENCE</h2>
+                    <p class="closing-subtitle editable">ร่วมสร้างประสบการณ์พนักงานที่ดีและส่งเสริมความเป็น IMPACT ให้แข็งแกร่งและน่าอยู่ไปด้วยกัน</p>
+                    <p class="closing-team editable">People Experience Team | IMPACT</p>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- ===========================================
+       PRESENTATION CONTROLLER & INLINE EDITOR SCRIPTS
+       =========================================== -->
+    <script>
+        // Restores text edits from localStorage before initializing presentation
+        const restoreSavedContent = () => {
+            const savedHTML = localStorage.getItem('pxMediaContentPlan_savedHTML');
+            if (savedHTML) {
+                document.getElementById('deckStage').innerHTML = savedHTML;
+            }
+        };
+        restoreSavedContent();
+
+        class SlidePresentation {
+            constructor() {
+                this.slides = document.querySelectorAll('.slide');
+                this.currentSlide = 0;
+                this.stage = document.getElementById('deckStage');
+                this.isTransitioning = false;
+                
+                this.setupStageScale();
+                this.setupKeyboardNav();
+                this.setupTouchNav();
+                this.setupScrollNav();
+                this.showSlide(0);
+            }
+
+            setupStageScale() {
+                const scale = () => {
+                    const factor = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+                    const x = (window.innerWidth - 1920 * factor) / 2;
+                    const y = (window.innerHeight - 1080 * factor) / 2;
+                    this.stage.style.transform = `translate(${x}px, ${y}px) scale(${factor})`;
+                };
+                scale();
+                window.addEventListener('resize', scale);
+            }
+
+            setupKeyboardNav() {
+                document.addEventListener('keydown', (e) => {
+                    // Do not change slides if user is currently editing text!
+                    if (e.target.classList.contains('editable') && e.target.getAttribute('contenteditable') === 'true') {
+                        return;
+                    }
+                    
+                    switch (e.key) {
+                        case 'ArrowRight':
+                        case ' ':
+                        case 'PageDown':
+                            this.nextSlide();
+                            break;
+                        case 'ArrowLeft':
+                        case 'PageUp':
+                            this.prevSlide();
+                            break;
+                        case 'Home':
+                            this.showSlide(0);
+                            break;
+                        case 'End':
+                            this.showSlide(this.slides.length - 1);
+                            break;
+                    }
+                });
+            }
+
+            setupTouchNav() {
+                let startX = 0;
+                let startY = 0;
+                
+                document.addEventListener('touchstart', (e) => {
+                    if (e.target.getAttribute('contenteditable') === 'true') return;
+                    startX = e.changedTouches[0].screenX;
+                    startY = e.changedTouches[0].screenY;
+                }, { passive: true });
+
+                document.addEventListener('touchend', (e) => {
+                    if (e.target.getAttribute('contenteditable') === 'true') return;
+                    const diffX = e.changedTouches[0].screenX - startX;
+                    const diffY = e.changedTouches[0].screenY - startY;
+                    
+                    // Horizontal swipes
+                    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+                        if (diffX < 0) {
+                            this.nextSlide();
+                        } else {
+                            this.prevSlide();
+                        }
+                    }
+                }, { passive: true });
+            }
+
+            setupScrollNav() {
+                let wheelAccumulator = 0;
+                
+                document.addEventListener('wheel', (e) => {
+                    if (e.target.getAttribute('contenteditable') === 'true') return;
+                    
+                    wheelAccumulator += e.deltaY;
+                    
+                    // Throttle wheel navigation to prevent slide skipping
+                    if (Math.abs(wheelAccumulator) >= 120) {
+                        if (wheelAccumulator > 0) {
+                            this.nextSlide();
+                        } else {
+                            this.prevSlide();
+                        }
+                        wheelAccumulator = 0;
+                    }
+                }, { passive: true });
+            }
+
+            nextSlide() {
+                if (this.currentSlide < this.slides.length - 1) {
+                    this.showSlide(this.currentSlide + 1);
+                }
+            }
+
+            prevSlide() {
+                if (this.currentSlide > 0) {
+                    this.showSlide(this.currentSlide - 1);
+                }
+            }
+
+            showSlide(index) {
+                if (this.isTransitioning) return;
+                this.isTransitioning = true;
+                
+                this.currentSlide = Math.max(0, Math.min(index, this.slides.length - 1));
+                
+                this.slides.forEach((slide, i) => {
+                    const isActive = i === this.currentSlide;
+                    slide.classList.toggle('active', isActive);
+                    
+                    // Trigger entry transition shortly after setting display to visible
+                    if (isActive) {
+                        setTimeout(() => {
+                            slide.classList.add('visible');
+                        }, 50);
+                    } else {
+                        slide.classList.remove('visible');
+                    }
+                });
+                
+                setTimeout(() => {
+                    this.isTransitioning = false;
+                }, 400); // Matches transition length
+            }
+        }
+
+        // Initialize presentation presentation controller
+        const presentation = new SlidePresentation();
+
+        /* ===========================================
+           INLINE EDITING CONTROLLER
+           =========================================== */
+        class InlineEditor {
+            constructor() {
+                this.isActive = false;
+                this.editToggle = document.getElementById('editToggle');
+                this.setupHotzone();
+                this.setupEvents();
+            }
+
+            setupHotzone() {
+                const hotzone = document.querySelector('.edit-hotzone');
+                let hideTimeout = null;
+
+                hotzone.addEventListener('mouseenter', () => {
+                    clearTimeout(hideTimeout);
+                    this.editToggle.classList.add('show');
+                });
+                
+                hotzone.addEventListener('mouseleave', () => {
+                    hideTimeout = setTimeout(() => {
+                        if (!this.isActive) this.editToggle.classList.remove('show');
+                    }, 400);
+                });
+
+                this.editToggle.addEventListener('mouseenter', () => {
+                    clearTimeout(hideTimeout);
+                });
+
+                this.editToggle.addEventListener('mouseleave', () => {
+                    hideTimeout = setTimeout(() => {
+                        if (!this.isActive) this.editToggle.classList.remove('show');
+                    }, 400);
+                });
+
+                hotzone.addEventListener('click', () => {
+                    this.toggleEditMode();
+                });
+                
+                this.editToggle.addEventListener('click', () => {
+                    this.toggleEditMode();
+                });
+            }
+
+            setupEvents() {
+                // Key listener for 'E' shortcut
+                document.addEventListener('keydown', (e) => {
+                    const isEditing = e.target.classList.contains('editable') && e.target.getAttribute('contenteditable') === 'true';
+                    if ((e.key === 'e' || e.key === 'E') && !isEditing) {
+                        e.preventDefault();
+                        this.toggleEditMode();
+                    }
+                    
+                    // Save on Ctrl+S or Cmd+S
+                    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                        e.preventDefault();
+                        this.saveChanges();
+                    }
+                });
+
+                // Auto-classing all header/text elements inside slides to support easy editing
+                document.querySelectorAll('.slide h1, .slide h2, .slide h3, .slide p, .slide span, .slide div').forEach(el => {
+                    if (!el.classList.contains('editable') && el.childNodes.length === 1 && el.childNodes[0].nodeType === Node.TEXT_NODE) {
+                        el.classList.add('editable');
+                    }
+                });
+            }
+
+            toggleEditMode() {
+                this.isActive = !this.isActive;
+                this.editToggle.classList.toggle('active', this.isActive);
+                document.body.classList.toggle('edit-mode-active', this.isActive);
+
+                const editables = document.querySelectorAll('.editable');
+                editables.forEach(el => {
+                    el.setAttribute('contenteditable', this.isActive ? 'true' : 'false');
+                });
+
+                if (!this.isActive) {
+                    this.saveChanges();
+                } else {
+                    // Try to focus the first editable element on the active slide
+                    const activeSlide = document.querySelector('.slide.active');
+                    if (activeSlide) {
+                        const firstEdit = activeSlide.querySelector('.editable');
+                        if (firstEdit) firstEdit.focus();
+                    }
+                }
+            }
+
+            saveChanges() {
+                // Ensure edit attributes are removed from saved HTML string so it loads in viewing mode
+                const tempStage = document.getElementById('deckStage').cloneNode(true);
+                tempStage.querySelectorAll('.editable').forEach(el => {
+                    el.removeAttribute('contenteditable');
+                });
+                
+                localStorage.setItem('pxMediaContentPlan_savedHTML', tempStage.innerHTML);
+                
+                // Visual save feedback
+                const banner = document.querySelector('.edit-mode-banner');
+                const prevText = banner.textContent;
+                banner.textContent = "💾 Changes Saved Successfully!";
+                banner.style.background = "#4CAF50";
+                banner.style.color = "#ffffff";
+                
+                setTimeout(() => {
+                    banner.textContent = prevText;
+                    banner.style.background = "";
+                    banner.style.color = "";
+                }, 1500);
+            }
+        }
+
+        // Initialize editor
+        const editor = new InlineEditor();
+    </script>
+</body>
+</html>
