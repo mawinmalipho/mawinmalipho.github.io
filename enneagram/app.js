@@ -287,7 +287,10 @@ document.addEventListener("DOMContentLoaded", () => {
       if (previouslySelectedIdx !== undefined && previouslySelectedIdx === index) {
         btn.classList.add("active");
       }
-      btn.addEventListener("click", () => handleAnswer(choice.type, index));
+      btn.addEventListener("click", () => {
+        btn.classList.add("active");
+        handleAnswer(choice.type, index);
+      });
       choicesContainer.appendChild(btn);
     });
   }

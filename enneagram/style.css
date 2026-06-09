@@ -511,16 +511,18 @@ p {
   transition: var(--transition-smooth);
 }
 
-.choice-btn:hover {
-  background: rgba(176, 0, 255, 0.06);
-  border-color: rgba(176, 0, 255, 0.3);
-  transform: translateX(5px);
-}
+@media (hover: hover) {
+  .choice-btn:hover {
+    background: rgba(176, 0, 255, 0.06);
+    border-color: rgba(176, 0, 255, 0.3);
+    transform: translateX(5px);
+  }
 
-.choice-btn:hover::before {
-  border-color: var(--neon-purple);
-  background: var(--neon-purple);
-  box-shadow: 0 0 8px var(--neon-purple);
+  .choice-btn:hover::before {
+    border-color: var(--neon-purple);
+    background: var(--neon-purple);
+    box-shadow: 0 0 8px var(--neon-purple);
+  }
 }
 
 .choice-btn.active {
