@@ -417,7 +417,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Set character portrait
     const characterImage = document.getElementById("result-character-image");
     if (characterImage) {
-      characterImage.src = `/enneagram/images/type${results.dominant}.png`;
+      characterImage.src = `images/type${results.dominant}.png`;
       characterImage.alt = profile.name;
     }
     
