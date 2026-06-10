@@ -163,74 +163,107 @@
 
     <!-- RESULTS SCREEN -->
     <section id="results-screen" class="card">
-      <!-- Invoice Header Decorator -->
-      <div class="invoice-header">
-        <div class="invoice-title">ใบอนุโมทนากรรม</div>
+      <!-- Card Header: Logo & Serial -->
+      <div class="card-header-row">
+        <div class="logo-text-mini">ENNEA<span>กรรม</span></div>
         <div class="invoice-serial" id="invoice-id">No. KM-666-0001</div>
       </div>
 
-      <div class="results-grid">
-        <!-- LEFT: Primary Type Profile -->
-        <div class="results-column-profile">
-          <div class="profile-badge">
-            <span class="badge-label">ลักษณ์หลักของคุณคือ</span>
+      <!-- Card Title & Subtitle -->
+      <div class="card-title-section">
+        <span class="badge-label">คุณมีลักษณะของ...</span>
+        <h1 id="result-type-name" class="neon-text">ลักษณ์ 1: นรกคนดีย์</h1>
+        <div id="result-type-title" class="type-subtitle">The Perfectionist Corpse</div>
+        
+        <!-- Tags Row -->
+        <div id="result-tags" class="card-tags-row">
+          <!-- Dynamically populated tags -->
+        </div>
+        
+        <p class="card-subtitle-desc">
+          เกราะป้องกันตัวตนหนาแน่นถึง <span id="card-ego-highlight" class="neon-purple">98%</span> ของสภาพจิตใจ!
+        </p>
+      </div>
+
+      <!-- Main Upper Grid (Radar on Left, Character & Desc on Right) -->
+      <div class="card-main-grid">
+        <!-- LEFT: Radar Chart -->
+        <div class="card-box radar-box">
+          <h3 class="box-title">📊 แผนภาพกิเลส 9 ด้าน (Karmic Radar Chart)</h3>
+          <div id="radar-chart-wrapper">
+            <!-- SVG Radar Chart is rendered here -->
+          </div>
+        </div>
+
+        <!-- RIGHT: Avatar & Description -->
+        <div class="card-column-right">
+          <!-- Character Portrait -->
+          <div class="card-box avatar-box">
             <div class="character-portrait-wrap">
               <img id="result-character-image" src="" alt="Karmic Character Portrait" class="character-portrait">
             </div>
-            <h1 id="result-type-name" class="neon-text">ลักษณ์ 1: นรกคนดีย์</h1>
-            <div id="result-type-title" class="type-subtitle">The Perfectionist Corpse</div>
           </div>
 
-          <div class="meta-metrics-grid">
-            <div class="metric-card">
-              <span class="metric-title">ระดับการตื่นรู้</span>
-              <span class="metric-value neon-red" id="metric-awareness">ตื่นรู้ปานกลาง</span>
-            </div>
-            <div class="metric-card">
-              <span class="metric-title">เกราะป้องกันตัวตน</span>
-              <span class="metric-value neon-purple" id="metric-ego">98%</span>
-            </div>
-          </div>
-
-          <div class="profile-description">
-            <h3>บันทึกเสียงสะท้อนจากกระจกส่องใจ</h3>
+          <!-- Description Box -->
+          <div class="card-box description-box">
+            <h3 class="box-title">🔍 กระจกส่องเงาบาป</h3>
             <p id="result-description">คำอธิบายจิกกัดจะถูกแสดงผลที่นี่...</p>
           </div>
+        </div>
+      </div>
 
-          <div class="karmic-details">
-            <div class="detail-box box-skill">
-              <h4>🛡️ สกิลติดตัว (Passive Skill)</h4>
-              <p id="result-passive-skill">รายละเอียดสกิล...</p>
-            </div>
-            
-            <div class="detail-box box-enemy">
-              <h4>👹 คู่ปรับกระตุ้นอัตตา</h4>
-              <p id="result-enemy">ลักษณ์ไหนที่เจอแล้วเหนื่อยใจ...</p>
-            </div>
+      <!-- Passive Skill Row (Full Width) -->
+      <div class="card-box skill-full-box">
+        <h3 class="box-title">🛡️ สกิลติดตัว (Passive Skill)</h3>
+        <p id="result-passive-skill">รายละเอียดสกิล...</p>
+      </div>
 
-            <div class="detail-box box-fix">
-              <h4>🕊️ ทางสายกลาง (แนวทางพัฒนาจิตใจ)</h4>
-              <p id="result-mitigation">คำแนะนำในการปล่อยวางตัวตน...</p>
+      <!-- Metrics Row (3 columns) -->
+      <div class="metric-card-group">
+        <div class="metric-card-box">
+          <span class="metric-card-title">ระดับการตื่นรู้</span>
+          <span class="metric-card-value neon-cyan" id="metric-awareness">ตื่นรู้ปานกลาง</span>
+        </div>
+        <div class="metric-card-box">
+          <span class="metric-card-title">เกราะป้องกันตัวตน</span>
+          <span class="metric-card-value neon-purple" id="metric-ego">98%</span>
+        </div>
+        <div class="metric-card-box">
+          <span class="metric-card-title">สารเคมีหลักในสมอง</span>
+          <span class="metric-card-value neon-red" id="metric-top-chemical">ความเป๊ะ 70%</span>
+        </div>
+      </div>
+
+      <!-- Lower Grid (2 columns: Enemy Scanner / Mitigation Advice) -->
+      <div class="card-lower-grid">
+        <!-- LEFT: Enemy Scanned Details -->
+        <div class="card-box enemy-card-box">
+          <h3 class="box-title">👹 คู่ปรับกระตุ้นอัตตา</h3>
+          <!-- Unscanned Placeholder -->
+          <div id="card-enemy-placeholder" class="enemy-placeholder">
+            <p>⚡ คลิกปุ่มด้านล่างเพื่อเริ่มสแกนหาเจ้ากรรมนายเวรดิจิทัลของคุณ</p>
+          </div>
+          <!-- Scanned Details -->
+          <div id="card-enemy-details" class="enemy-details hidden">
+            <div class="enemy-avatar-wrap-mini">
+              <div class="enemy-avatar-mini" id="enemy-avatar-mini">👹</div>
+              <div class="enemy-name-mini" id="enemy-name-mini">ลักษณ์ X: เปรตไอเดีย</div>
             </div>
+            <p id="enemy-desc-mini" class="enemy-desc-mini">คำอธิบายเหตุผลของการขัดขากัน...</p>
           </div>
         </div>
 
-        <!-- RIGHT: Visual Metrics & Radar Chart -->
-        <div class="results-column-chart">
-          <div class="chart-container">
-            <h3>แผนภาพกิเลสฝังใจ 9 ด้าน (Karmic Radar Chart)</h3>
-            <div id="radar-chart-wrapper">
-              <!-- SVG Radar Chart is rendered here -->
-            </div>
-          </div>
-
-          <div class="chemicals-container">
-            <h3>สารเคมีในสมองปัจจุบัน</h3>
-            <div id="chemicals-list" class="chemicals-list">
-              <!-- Dynamically populated chemicals progress bars -->
-            </div>
-          </div>
+        <!-- RIGHT: Mitigation Advice -->
+        <div class="card-box mitigation-card-box">
+          <h3 class="box-title">🕊️ ทางสายกลาง (แนวทางปล่อยวาง)</h3>
+          <p id="result-mitigation">คำแนะนำในการปล่อยวางตัวตน...</p>
         </div>
+      </div>
+
+      <!-- Footer branding info -->
+      <div class="card-footer-branding">
+        <div class="footer-brand-logo">ENNEA<span>กรรม</span></div>
+        <div class="footer-brand-text">ส่องกระจกดูเงาบาปประจำตัวคุณ | https://mawinmalipho.github.io/enneagram/</div>
       </div>
 
       <!-- Action buttons -->

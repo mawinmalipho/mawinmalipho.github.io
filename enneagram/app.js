@@ -27,13 +27,21 @@ document.addEventListener("DOMContentLoaded", () => {
   const resultTypeTitle = document.getElementById("result-type-title");
   const resultDescription = document.getElementById("result-description");
   const resultPassiveSkill = document.getElementById("result-passive-skill");
-  const resultEnemy = document.getElementById("result-enemy");
   const resultMitigation = document.getElementById("result-mitigation");
   const metricAwareness = document.getElementById("metric-awareness");
   const metricEgo = document.getElementById("metric-ego");
-  const chemicalsList = document.getElementById("chemicals-list");
   const radarChartWrapper = document.getElementById("radar-chart-wrapper");
   const invoiceId = document.getElementById("invoice-id");
+
+  // New Infographic Trading Card Elements
+  const resultTags = document.getElementById("result-tags");
+  const cardEgoHighlight = document.getElementById("card-ego-highlight");
+  const metricTopChemical = document.getElementById("metric-top-chemical");
+  const cardEnemyPlaceholder = document.getElementById("card-enemy-placeholder");
+  const cardEnemyDetails = document.getElementById("card-enemy-details");
+  const enemyAvatarMini = document.getElementById("enemy-avatar-mini");
+  const enemyNameMini = document.getElementById("enemy-name-mini");
+  const enemyDescMini = document.getElementById("enemy-desc-mini");
 
   // Modal elements
   const enemyScanModal = document.getElementById("enemy-scan-modal");
@@ -58,6 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
     1: {
       name: "ลักษณ์ 1 · กรรมเพ่งโทษ — \"นรกคนดีย์\"",
       title: "บาป: ความโกรธ (Anger)",
+      tags: ["#เป๊ะทุกระเบียบ", "#เพ่งโทษตนเองและผู้อื่น", "#ไม้บรรทัดเหล็ก"],
       description: "ทรมานตัวเองและคนอื่นด้วยมาตรฐานที่สมบูรณ์แบบ เห็นอะไรก็ขัดหูขัดตา ในหัวมีไม้บรรทัดที่ไม่เคยวางลง มุ่งมั่นที่จะทำทุกอย่างให้ถูกต้องและดีที่สุดเพื่อช่วยให้สังคมดีขึ้น แต่บ่อยครั้งที่ความมุ่งมั่นนี้ย้อนมาสร้างความเครียดและบีบรัดหัวใจคุณเองจนเหนื่อยล้า พยายามผ่อนคลายและใจดีกับตัวเองบ้างนะ",
       passiveSkill: "เรดาร์ตรวจจับจุดแก้ไข (มีสายตาที่เฉียบคม เห็นจุดบกพร่องหรือสิ่งที่ต้องพัฒนาได้อย่างรวดเร็วเพื่อปรับปรุงให้งานออกมาดีที่สุด)",
       enemyType: 7,
@@ -73,6 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
     2: {
       name: "ลักษณ์ 2 · บ่วงทวงบุญคุณ — \"นักบุญทุนชาวบ้าน\"",
       title: "บาป: ความทะนงตน (Pride)",
+      tags: ["#ผู้ให้สายทวง", "#นักบุญทุนคนอื่น", "#บ่วงทวงบุญคุณ"],
       description: "ให้ความช่วยเหลือจนลืมตัวเอง แล้วแอบผูกมัดคนอื่นไว้ด้วยความคาดหวังว่าจะได้รับกลับคืน คุณมีหัวใจที่ยิ่งใหญ่และพร้อมช่วยเหลือดูแลทุกคนอย่างไม่รู้จักเหน็ดเหนื่อย แต่บางครั้งความปรารถนาดีนี้ก็อาจแฝงความคาดหวังลึกๆ อยากได้รับการยอมรับและตอบแทนความรู้สึกดีๆ กลับคืนมา",
       passiveSkill: "สัมผัสห่วงใยไวแสง (สามารถตรวจจับความสุข ความเศร้า หรือความต้องการของคนอื่นรอบตัวได้ทันที พร้อมเข้าช่วยเหลือในทุกสถานการณ์)",
       enemyType: 5,
@@ -88,6 +98,7 @@ document.addEventListener("DOMContentLoaded", () => {
     3: {
       name: "ลักษณ์ 3 · กรรมภาพลวงตา — \"คุกแห่งความสำเร็จ\"",
       title: "บาป: ความหลอกลวง (Deceit)",
+      tags: ["#บ้างานก้าวหน้า", "#คุกแห่งความสำเร็จ", "#ภาพลักษณ์ต้องปัง"],
       description: "ติดกับดักเปลือกนอก ต้องเด่น ต้องปัง จนลืมว่าจริงๆ แล้วตัวเองรู้สึกอะไร ชีวิตขับเคลื่อนด้วยเป้าหมาย ถ้วยรางวัล และยอดไลก์สะสม ยอมทำทุกอย่างเพื่อความสำเร็จจนละเลยความรู้สึกและสุขภาพจิตใจที่แท้จริงข้างใน พักผ่อนบ้างและเรียนรู้ว่าคุณมีค่าแม้ไม่มีสปอตไลท์ส่อง",
       passiveSkill: "พลังดึงดูดความสำเร็จ (มีทักษะการนำเสนอตัวเองและงานได้อย่างดีเลิศ ปรับตัวเข้ากับทุกสถานการณ์เพื่อสร้างความประทับใจได้ทันที)",
       enemyType: 4,
@@ -103,6 +114,7 @@ document.addEventListener("DOMContentLoaded", () => {
     4: {
       name: "ลักษณ์ 4 · กรรมโศกนาฏกรรม — \"วังวนคนถูกลืม\"",
       title: "บาป: ความอิจฉา (Envy)",
+      tags: ["#อ่อนไหวโศกตรม", "#วังวนคนถูกลืม", "#ศิลปินดราม่า"],
       description: "รู้สึกขาดหายและไม่คู่ควร ดำดิ่งในความเศร้าที่คิดว่าไม่มีใครเข้าใจ มองคนอื่นมีในสิ่งที่เราไม่มีเสมอ รักความเงียบ ความเศร้า และความสร้างสรรค์ประณีต แต่บางครั้งก็เผลอจมอยู่กับดราม่าในใจและคิดว่าโลกนี้ทอดทิ้งคุณ ลองเปิดใจรับไมตรีจิตรอบตัวบ้างนะ",
       passiveSkill: "สัมผัสอารมณ์สุนทรีย์ (มีความละเอียดอ่อนทางอารมณ์สูงมาก สามารถเปลี่ยนความเศร้าหรือความอ้างว้างให้กลายเป็นงานศิลปะหรืองานสร้างสรรค์ที่น่าทึ่ง)",
       enemyType: 3,
@@ -118,6 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
     5: {
       name: "ลักษณ์ 5 · กรรมกำแพงใจ — \"ถ้ำฤๅษีไฮเทค\"",
       title: "บาป: ความตระหนี่ (Avarice)",
+      tags: ["#ถ้ำฤๅษีไฮเทค", "#โลกส่วนตัวสูง", "#ข้อมูลต้องแน่น"],
       description: "หวงแหนพลังงาน เวลา และข้อมูล หวาดระแวงโลกภายนอกจนขังตัวเองไว้ในหัว รักความสงบและชอบวิเคราะห์สิ่งต่าง ๆ อย่างเป็นระบบ แต่การสร้างกำแพงกั้นตัวเองไว้มากเกินไปอาจทำให้คุณพลาดโอกาสแชร์สิ่งดี ๆ และเชื่อมสัมพันธ์กับผู้คนรอบข้าง",
       passiveSkill: "ห้องสมุดเคลื่อนที่ (มีระบบจัดระเบียบข้อมูลในสมองที่เป็นเลิศ สามารถเชื่อมโยงวิเคราะห์สิ่งยากๆ ให้เข้าใจง่ายได้อย่างมีหลักการ)",
       enemyType: 2,
@@ -133,6 +146,7 @@ document.addEventListener("DOMContentLoaded", () => {
     6: {
       name: "ลักษณ์ 6 · กรรมระแวงภัย — \"มโนวิตกจริต\"",
       title: "บาป: ความกลัว (Fear)",
+      tags: ["#มโนระแวงภัย", "#คิดแผนเผื่อล่ม", "#ซื่อสัตย์รักพวกพ้อง"],
       description: "สร้างฉากหายนะในหัวตลอดเวลา กังวลจนไม่ได้เริ่มทำอะไร มองหาภัยแม้ในที่ที่ไม่มี เป็นคนรอบคอบ ซื่อสัตย์ และรักเพื่อนฝูง แต่ความกังวลสะสมที่มากเกินไปอาจสร้างความเครียดและจำกัดโอกาสใหม่ๆ ในชีวิต ลองปล่อยให้ทุกอย่างเป็นธรรมชาติและวางความระแวงลงบ้างนะ",
       passiveSkill: "โล่ป้องกันภัยล่วงหน้า (มีความสามารถในการคาดการณ์ความเสี่ยงและจุดบกพร่องของแผนงานเพื่อเตรียมรับมือล่วงหน้าได้อย่างปลอดภัยที่สุด)",
       enemyType: 8,
@@ -148,6 +162,7 @@ document.addEventListener("DOMContentLoaded", () => {
     7: {
       name: "ลักษณ์ 7 · กรรมแสวงหา — \"มารร้อยโปรเจกต์\"",
       title: "บาป: ความตะกละ (Gluttony)",
+      tags: ["#มารร้อยโปรเจกต์", "#สนุกสุดขีดหนีทุกข์", "#เป็ดขี้เบื่อ"],
       description: "กลัวความทุกข์และความน่าเบื่อ เลยเสพสิ่งใหม่ ประสบการณ์ใหม่ ไม่หยุด จนไม่เคยอยู่กับสิ่งตรงหน้าได้นาน คุณเป็นคนร่าเริงแจ่มใส โลกสดใสในสายตาคุณเสมอ แต่การมองหาทริปใหม่ กิจกรรมใหม่ ช้อปปิ้ง แสวงหาความตื่นเต้นอยู่ตลอดเวลาอาจเป็นกลไกการหนีปัญหาชั่วคราว ลองเรียนรู้อยู่นิ่งและสงบสุขกับเรื่องปัจจุบันดูนะ",
       passiveSkill: "เครื่องฟอกอากาศพลังบวก (มีทักษะการปรับอารมณ์ของตนเองและบรรยากาศรอบข้างให้เต็มไปด้วยความหวังและความสนุกสนานได้ในพริบตา)",
       enemyType: 1,
@@ -163,6 +178,7 @@ document.addEventListener("DOMContentLoaded", () => {
     8: {
       name: "ลักษณ์ 8 · กรรมครอบงำ — \"บารมีนักเลง\"",
       title: "บาป: ความบ้าพลัง (Lust)",
+      tags: ["#บารมีนักเลง", "#ทุบโต๊ะคุมเกม", "#พร้อมชนปกป้อง"],
       description: "ต้องการควบคุมทุกอย่างรอบตัว แสดงความแข็งกร้าวเพื่อปกปิดความอ่อนแอที่ไม่ยอมให้ใครเห็น รักความยุติธรรม ใจถึงพึ่งได้ และพร้อมปกป้องทุกคน แต่ความพยายามคุมเกมและชนแหลกอาจทำให้คนรอบตัวเกร็ง ลองยอมผ่อนคลาย ลดความแข็งกร้าวลงบ้าง และเปิดมุมอ่อนโยนออกมานะ",
       passiveSkill: "พลังอำนาจคุมทัพ (มีออร่าความเป็นผู้นำที่ทำให้คนเกรงใจ เชื่อฟัง และสร้างแรงผลักดันให้ทุกคนลงมือทำเพื่อเป้าหมายร่วมกันได้ดีเยี่ยม)",
       enemyType: 9,
@@ -178,6 +194,7 @@ document.addEventListener("DOMContentLoaded", () => {
     9: {
       name: "ลักษณ์ 9 · กรรมละเลย — \"เจ้าชายนิทรา\"",
       title: "บาป: ความเฉื่อยชา (Sloth)",
+      tags: ["#เจ้าชายนิทรา", "#ปล่อยเบลอชิลๆ", "#สันติภาพจอมปลอม"],
       description: "เมินเฉยต่อปัญหา ปล่อยเบลอเพื่อรักษาความสงบจอมปลอม หลอมรวมไปกับคนอื่นจนลืมว่าตัวเองต้องการอะไร เป็นคนน่ารัก อ่อนโยน เข้ากับทุกคนได้ดี แต่การยอมทำตัวกลมกลืนและหนีความขัดแย้งด้วยการเมินเฉย แอบต่อต้านเงียบๆ อาจทำให้เสียงและความฝันที่แท้จริงของคุณหลับไหลไปตลอดกาล",
       passiveSkill: "หูดับสะท้อนเสียงบ่น (ความสามารถในการรับฟังกฎเกณฑ์ ข้อเรียกร้อง หรือเสียงบ่นของหัวหน้า/แฟน แต่สมองจะทำการปิดการประมวลผลทันทีและสติจะไหลไปสวรรค์)",
       enemyType: 3,
@@ -404,9 +421,22 @@ document.addEventListener("DOMContentLoaded", () => {
       characterImage.alt = profile.name;
     }
     
-    // Set mitigation & enemy
-    resultEnemy.innerText = profile.enemyName;
+    // Set mitigation
     resultMitigation.innerText = profile.mitigation;
+
+    // Set tags dynamically
+    resultTags.innerHTML = "";
+    if (profile.tags && profile.tags.length > 0) {
+      profile.tags.forEach(tag => {
+        const span = document.createElement("span");
+        span.className = "tag";
+        span.innerText = tag;
+        resultTags.appendChild(span);
+      });
+    }
+
+    // Set card ego highlight
+    cardEgoHighlight.innerText = `${results.egoThickness}%`;
 
     // Set metrics
     metricAwareness.innerText = results.awarenessLevel;
@@ -414,27 +444,17 @@ document.addEventListener("DOMContentLoaded", () => {
     metricEgo.innerText = `${results.egoThickness}%`;
     metricEgo.className = `metric-value neon-purple neon-text`;
 
-    // Populate Brain Chemicals
-    chemicalsList.innerHTML = "";
-    profile.chemicals.forEach(chem => {
-      const item = document.createElement("div");
-      item.className = "chem-item";
-      item.innerHTML = `
-        <div class="chem-label-row">
-          <span class="chem-name">${chem.name}</span>
-          <span class="chem-value">${chem.value}%</span>
-        </div>
-        <div class="chem-bar-bg">
-          <div class="chem-bar-fill" style="width: 0%;"></div>
-        </div>
-      `;
-      chemicalsList.appendChild(item);
-      
-      // Animate progress bar fill in next tick
-      setTimeout(() => {
-        item.querySelector(".chem-bar-fill").style.width = `${chem.value}%`;
-      }, 100);
-    });
+    // Populate dominant brain chemical
+    if (profile.chemicals && profile.chemicals.length > 0) {
+      const mainChem = profile.chemicals[0];
+      metricTopChemical.innerText = `${mainChem.name} ${mainChem.value}%`;
+    } else {
+      metricTopChemical.innerText = "-";
+    }
+
+    // Reset enemy scanned cards state
+    cardEnemyPlaceholder.classList.remove("hidden");
+    cardEnemyDetails.classList.add("hidden");
 
     // Render Radar Chart
     renderRadarChart(userScores, results.dominant);
@@ -615,6 +635,26 @@ document.addEventListener("DOMContentLoaded", () => {
       9: "🦥 (กรรมละเลย — เจ้าชายนิทรา)"
     };
     enemyAvatar.innerText = avatars[profile.enemyType] || "👹";
+
+    // Set mini details on the card
+    const miniAvatars = {
+      1: "👮‍♂️",
+      2: "😇",
+      3: "🏆",
+      4: "🥀",
+      5: "🧙‍♂️",
+      6: "🕵️‍♂️",
+      7: "🦄",
+      8: "🦁",
+      9: "🦥"
+    };
+    enemyAvatarMini.innerText = miniAvatars[profile.enemyType] || "👹";
+    enemyNameMini.innerText = profile.enemyName;
+    enemyDescMini.innerText = profile.enemyDesc;
+
+    // Show details on card
+    cardEnemyPlaceholder.classList.add("hidden");
+    cardEnemyDetails.classList.remove("hidden");
 
     // Show details
     scanResultDetails.classList.remove("hidden");
