@@ -640,16 +640,28 @@ p {
 }
 
 .avatar-box {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 10px;
+  display: block;
+  padding: 0;
+  overflow: hidden;
+  height: 200px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.avatar-box:hover {
+  border-color: rgba(176, 0, 255, 0.4);
+  box-shadow: 0 0 15px rgba(176, 0, 255, 0.2);
 }
 
 .avatar-box .character-portrait-wrap {
-  margin: 5px auto;
-  width: 120px;
-  height: 120px;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  padding: 0;
+  background: none;
+  box-shadow: none;
+  overflow: hidden;
 }
 
 .skill-full-box {
@@ -787,7 +799,7 @@ p {
   width: 120px;
   height: 120px;
   margin: 15px 0 20px 0;
-  border-radius: 50%;
+  border-radius: 8px;
   padding: 3px;
   background: linear-gradient(135deg, var(--neon-purple), var(--neon-cyan));
   box-shadow: 0 0 15px rgba(176, 0, 255, 0.4), 0 0 30px rgba(0, 240, 255, 0.2);
@@ -806,9 +818,14 @@ p {
 .character-portrait {
   width: 100%;
   height: 100%;
-  border-radius: 50%;
+  border-radius: 0;
   object-fit: cover;
   display: block;
+  transition: transform 0.5s ease;
+}
+
+.character-portrait:hover {
+  transform: scale(1.05);
 }
 
 .badge-label {
