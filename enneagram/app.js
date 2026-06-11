@@ -329,7 +329,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Update progress bar to 100%
       progressBar.style.width = `100%`;
       progressText.innerText = `100%`;
-      setTimeout(showResults, 500);
+      setTimeout(handleQuizCompletion, 500);
     }
   }
 
@@ -404,7 +404,65 @@ document.addEventListener("DOMContentLoaded", () => {
     };
   }
 
-  function showResults() {
+  function handleQuizCompletion() {
+    // Transition to loading/processing state
+    choicesContainer.style.pointerEvents = "none";
+    progressBar.style.width = "100%";
+    progressText.innerText = "กำลังคำนวณและบันทึกผลกรรม...";
+
+    const results = calculateResults();
+    
+    const payload = {
+      name: userName,
+      email: userEmail,
+      dominant_type: results.dominant,
+      awareness_level: results.awarenessLevel,
+      scores: userScores
+    };
+
+    const apiEndpoint = window.location.hostname.includes("github.io")
+      ? "https://mawinmalipho.vercel.app/api/quiz-submit"
+      : "/api/quiz-submit";
+
+    let submitted = false;
+    const fallbackTimeout = setTimeout(() => {
+      if (!submitted) {
+        submitted = true;
+        showResults(null);
+      }
+    }, 2500);
+
+    fetch(apiEndpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    })
+    .then(res => {
+      if (!res.ok) throw new Error('Database response error');
+      return res.json();
+    })
+    .then(data => {
+      if (!submitted) {
+        clearTimeout(fallbackTimeout);
+        submitted = true;
+        console.log('Successfully saved to database:', data);
+        loadQuizCount();
+        showResults(data.id);
+      }
+    })
+    .catch(err => {
+      console.error('Database saving failed:', err);
+      if (!submitted) {
+        clearTimeout(fallbackTimeout);
+        submitted = true;
+        showResults(null);
+      }
+    });
+  }
+
+  function showResults(resultsDbId = null) {
     const results = calculateResults();
     const profile = enneagramProfiles[results.dominant];
 
@@ -459,8 +517,25 @@ document.addEventListener("DOMContentLoaded", () => {
     // Render Radar Chart
     renderRadarChart(userScores, results.dominant);
 
-    // Save results to Database
-    saveResultToDatabase(results.dominant, results.awarenessLevel, userScores);
+    // Set Invoice ID
+    const dbId = resultsDbId || Math.floor(1000 + Math.random() * 9000);
+    const fullInvoiceId = `KM-${660 + results.dominant}-${dbId}`;
+    invoiceId.innerText = `No. ${fullInvoiceId}`;
+
+    // Set URL hash so refresh doesn't lose it
+    window.location.hash = '/' + fullInvoiceId;
+
+    // Save to localStorage so we can load it instantly on refresh
+    localStorage.setItem(`enneagram_result_${fullInvoiceId}`, JSON.stringify({
+      userName: userName,
+      userEmail: userEmail,
+      userScores: userScores,
+      dominant: results.dominant,
+      awarenessLevel: results.awarenessLevel,
+      awarenessClass: results.awarenessClass,
+      egoThickness: results.egoThickness,
+      invoiceId: fullInvoiceId
+    }));
 
     // Transition Screen
     quizScreen.classList.remove("active");
@@ -697,6 +772,8 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- Event Listeners ---
   btnStart.addEventListener("click", startQuiz);
   btnRetry.addEventListener("click", () => {
+    // Clear URL hash
+    window.location.hash = "";
     resultsScreen.classList.remove("active");
     setTimeout(() => {
       resultsScreen.classList.add("hidden");
@@ -761,6 +838,138 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  // --- Hash Routing / Direct Result Viewing ---
+  function checkUrlHash() {
+    const hash = window.location.hash;
+    if (hash && hash.startsWith("#/KM-")) {
+      const fullInvoiceId = hash.replace("#/", "");
+      
+      // 1. Try to load from localStorage first
+      const cached = localStorage.getItem(`enneagram_result_${fullInvoiceId}`);
+      if (cached) {
+        try {
+          const data = JSON.parse(cached);
+          userName = data.userName || "";
+          userEmail = data.userEmail || "";
+          userScores = data.userScores || { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 };
+          primaryType = data.dominant;
+          showResultsFromCache(data, fullInvoiceId);
+          return;
+        } catch (e) {
+          console.error("Error parsing cached result:", e);
+        }
+      }
+
+      // 2. Fetch from database if shared link or cleared cache
+      const parts = fullInvoiceId.split("-");
+      const dbId = parts[parts.length - 1];
+      const typeFromUrl = parseInt(parts[1]) - 660;
+
+      if (!dbId || isNaN(typeFromUrl) || typeFromUrl < 1 || typeFromUrl > 9) {
+        return; // Invalid ID format
+      }
+
+      // Show loader state
+      introScreen.classList.add("hidden");
+      introScreen.classList.remove("active");
+      
+      const apiEndpoint = window.location.hostname.includes("github.io")
+        ? `https://mawinmalipho.vercel.app/api/quiz-get?id=${dbId}`
+        : `/api/quiz-get?id=${dbId}`;
+
+      fetch(apiEndpoint)
+        .then(res => {
+          if (!res.ok) throw new Error("Could not fetch result");
+          return res.json();
+        })
+        .then(data => {
+          userName = data.name || "";
+          userEmail = data.email || "";
+          userScores = data.scores || { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 };
+          primaryType = data.dominant_type;
+          
+          showResults(dbId);
+        })
+        .catch(err => {
+          console.error("Failed to fetch shared quiz result:", err);
+          // Fallback reconstruction
+          userName = "ผู้มีกรรมนิรนาม";
+          userEmail = "";
+          userScores = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 };
+          userScores[typeFromUrl] = 8;
+          primaryType = typeFromUrl;
+          showResults(dbId);
+        });
+    }
+  }
+
+  function showResultsFromCache(cachedData, fullInvoiceId) {
+    const profile = enneagramProfiles[cachedData.dominant];
+
+    // Populating DOM elements
+    resultTypeName.innerText = profile.name;
+    resultTypeTitle.innerText = profile.title;
+    resultDescription.innerText = profile.description;
+    resultPassiveSkill.innerText = profile.passiveSkill;
+
+    // Set character portrait
+    const characterImage = document.getElementById("result-character-image");
+    if (characterImage) {
+      characterImage.src = `images/type${cachedData.dominant}.png`;
+      characterImage.alt = profile.name;
+    }
+    
+    // Set mitigation
+    resultMitigation.innerText = profile.mitigation;
+
+    // Set tags dynamically
+    resultTags.innerHTML = "";
+    if (profile.tags && profile.tags.length > 0) {
+      profile.tags.forEach(tag => {
+        const span = document.createElement("span");
+        span.className = "tag";
+        span.innerText = tag;
+        resultTags.appendChild(span);
+      });
+    }
+
+    // Set card ego highlight
+    cardEgoHighlight.innerText = `${cachedData.egoThickness}%`;
+
+    // Set metrics
+    metricAwareness.innerText = cachedData.awarenessLevel;
+    metricAwareness.className = `metric-value ${cachedData.awarenessClass} neon-text`;
+    metricEgo.innerText = `${cachedData.egoThickness}%`;
+    metricEgo.className = `metric-value neon-purple neon-text`;
+
+    // Populate dominant brain chemical
+    if (profile.chemicals && profile.chemicals.length > 0) {
+      const mainChem = profile.chemicals[0];
+      metricTopChemical.innerText = `${mainChem.name} ${mainChem.value}%`;
+    } else {
+      metricTopChemical.innerText = "-";
+    }
+
+    // Reset enemy scanned cards state
+    cardEnemyPlaceholder.classList.remove("hidden");
+    cardEnemyDetails.classList.add("hidden");
+
+    // Render Radar Chart
+    renderRadarChart(userScores, cachedData.dominant);
+
+    // Set Invoice ID
+    invoiceId.innerText = `No. ${fullInvoiceId}`;
+
+    // Transition Screen
+    introScreen.classList.remove("active");
+    introScreen.classList.add("hidden");
+    quizScreen.classList.remove("active");
+    quizScreen.classList.add("hidden");
+    resultsScreen.classList.remove("hidden");
+    resultsScreen.classList.add("active");
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
   // Fetch live quiz count
   function loadQuizCount() {
     const counterElement = document.getElementById("karmic-counter");
@@ -786,5 +995,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Load count initially
   loadQuizCount();
+
+  // Check URL hash on page load
+  checkUrlHash();
 
 });

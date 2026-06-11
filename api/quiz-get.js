@@ -6,7 +6,7 @@ const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 export default async function handler(request, response) {
   // Add CORS headers for cross-origin requests (e.g. from GitHub Pages)
   response.setHeader('Access-Control-Allow-Origin', '*');
-  response.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  response.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   response.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   // Handle preflight OPTIONS request
@@ -14,17 +14,16 @@ export default async function handler(request, response) {
     return response.status(200).end();
   }
 
-  // Only allow POST requests
-  if (request.method !== 'POST') {
+  // Only allow GET requests
+  if (request.method !== 'GET') {
     return response.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  // Parse body data
-  const { name, email, dominant_type, awareness_level, scores } = request.body;
+  // Get ID from query parameter
+  const { id } = request.query;
 
-  // Simple validation
-  if (!name || !email || dominant_type === undefined || !awareness_level || !scores) {
-    return response.status(400).json({ message: 'ข้อมูลไม่ครบถ้วน (กรุณากรอกชื่อและอีเมล)' });
+  if (!id) {
+    return response.status(400).json({ message: 'โปรดระบุ ID ที่ต้องการดึงข้อมูล' });
   }
 
   // Check if credentials exist
@@ -38,35 +37,27 @@ export default async function handler(request, response) {
     // 1. Initialize Supabase client
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // 2. Insert row into the 'quiz_results' table
+    // 2. Fetch row where id matches
     const { data, error } = await supabase
       .from('quiz_results')
-      .insert([
-        { 
-          name,
-          email,
-          dominant_type: parseInt(dominant_type), 
-          awareness_level, 
-          scores 
-        }
-      ])
-      .select('id');
+      .select('*')
+      .eq('id', parseInt(id))
+      .single();
 
     if (error) {
       throw error;
     }
 
-    const insertedId = data && data.length > 0 ? data[0].id : null;
+    if (!data) {
+      return response.status(404).json({ message: 'ไม่พบข้อมูลผลกรรมสำหรับ ID นี้' });
+    }
 
-    // 3. Return success response
-    return response.status(200).json({ 
-      message: 'บันทึกข้อมูลผลกรรมเรียบร้อยแล้ว',
-      id: insertedId
-    });
+    // 3. Return the retrieved data
+    return response.status(200).json(data);
   } catch (error) {
-    console.error('Supabase Database Error:', error);
+    console.error('Supabase Database Fetch Error:', error);
     return response.status(500).json({ 
-      message: 'เกิดข้อผิดพลาดในการบันทึกข้อมูลลง Supabase', 
+      message: 'เกิดข้อผิดพลาดในการดึงข้อมูลจาก Supabase', 
       error: error.message 
     });
   }
